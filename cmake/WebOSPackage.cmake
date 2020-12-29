@@ -46,15 +46,15 @@ function(target_webos_package TARGET)
         COMMAND rm -rf pkg_$ENV{ARCH} 
         COMMAND mkdir pkg_$ENV{ARCH}
         # Copy binary
-        COMMAND cp -v ${bin_path} ${package_dir}/
+        COMMAND cp ${bin_path} ${package_dir}/
         # Copy appinfo.json
         COMMAND jo id=${appinfo_id} version=${appinfo_version} vendor=${appinfo_vendor}
             type=native main=${TARGET} title=${appinfo_title} icon=${appinfo_icon_basename} 
             ${appinfo_extra} > ${package_dir}/appinfo.json
         # Copy icon
-        COMMAND cp -v ${appinfo_icon} ${package_dir}/
+        COMMAND cp ${appinfo_icon} ${package_dir}/
         # Copy extra files
-        COMMAND test -n "${package_assets}" && cd ${CMAKE_CURRENT_SOURCE_DIR} && cp -vr ${package_assets} ${package_dir}/ || true
+        COMMAND test -n "${package_assets}" && cd ${CMAKE_CURRENT_SOURCE_DIR} && cp -r ${package_assets} ${package_dir}/ || true
         # Build IPK
         COMMAND ares-package ${package_dir}
         DEPENDS ${TARGET}

@@ -66,7 +66,7 @@ free_json:
 }
 EXTERN_C_END
 #define DEBUG_HELPER(argc, argv) debug_helper_setup(argc, argv)
-#define REDIR_STDOUT(filename) dh_redir_output("/tmp/" #filename ".out.log", "/tmp/" #filename ".err.log")
+#define REDIR_STDOUT(filename) dh_redir_output("/tmp/" filename ".out.log", "/tmp/" filename ".err.log")
 #else
 #define DEBUG_HELPER(argc, argv)
 #define REDIR_STDOUT(filename)

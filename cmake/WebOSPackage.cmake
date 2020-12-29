@@ -27,8 +27,15 @@ function(target_webos_package TARGET)
     get_target_property(appinfo_title ${TARGET} WEBOS_APPINFO_TITLE)
     get_target_property(appinfo_icon ${TARGET} WEBOS_APPINFO_ICON)
     get_target_property(appinfo_extra ${TARGET} WEBOS_APPINFO_EXTRA)
+    if (NOT appinfo_extra)
+        set(appinfo_extra "")
+    endif()
 
     get_target_property(package_assets ${TARGET} WEBOS_PACKAGE_ASSETS)
+    if (NOT package_assets)
+        set(package_assets "")
+    endif()
+
     foreach(asset IN LISTS ${package_assets})
         if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${asset})
             message(FATAL_ERROR "Can't find " ${asset})
@@ -58,7 +65,7 @@ function(target_webos_package TARGET)
         # Build IPK
         COMMAND ares-package ${package_dir}
         DEPENDS ${TARGET}
-        BYPRODUCTS ${package_dir} ${package_ipk_name}
+        BYPRODUCTS ${package_dir} ${CMAKE_CURRENT_BINARY_DIR}/${package_ipk_name}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         VERBATIM
         SOURCES ${appinfo_icon}

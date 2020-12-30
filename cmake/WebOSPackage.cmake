@@ -70,4 +70,9 @@ function(target_webos_package TARGET)
         VERBATIM
         SOURCES ${appinfo_icon}
     )
+    
+    add_custom_target(webos-install-${TARGET}
+        COMMAND ares-install ${CMAKE_CURRENT_BINARY_DIR}/${package_ipk_name}
+        DEPENDS webos-package-${TARGET}
+    )
 endfunction()

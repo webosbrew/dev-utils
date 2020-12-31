@@ -17,8 +17,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <json.h>
-
 EXTERN_C_BEGIN
 static void dh_redir_output(const char *outfile, const char *errfile)
 {
@@ -33,7 +31,7 @@ static void dh_redir_output(const char *outfile, const char *errfile)
     close(fdout);
     close(fderr);
 }
-
+#ifdef JSON_C_VERSION
 static void debug_helper_setup(int argc, char **argv)
 {
     if (argc < 2)
@@ -64,6 +62,7 @@ free_params:
 free_json:
     json_object_put(json);
 }
+#endif
 EXTERN_C_END
 #define DEBUG_HELPER(argc, argv) debug_helper_setup(argc, argv)
 #define REDIR_STDOUT(filename) dh_redir_output("/tmp/" filename ".out.log", "/tmp/" filename ".err.log")

@@ -1,3 +1,5 @@
+cmake_minimum_required (VERSION 3.0)
+
 find_program(JO_PROGRAM jo)
 if (NOT JO_PROGRAM)
     message(FATAL_ERROR "jo is not installed. See https://github.com/jpmens/jo")

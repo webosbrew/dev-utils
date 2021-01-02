@@ -46,6 +46,7 @@ function(target_webos_package TARGET)
 
     set(package_dir ${CMAKE_CURRENT_BINARY_DIR}/pkg_$ENV{ARCH})
     set(package_ipk_name ${appinfo_id}_${appinfo_version}_$ENV{ARCH}.ipk)
+    target_compile_definitions(${TARGET} PUBLIC WEBOS_APPID="${appinfo_id}")
 
     # Build package target for component
     add_custom_target(webos-package-${TARGET}

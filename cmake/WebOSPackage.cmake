@@ -46,14 +46,15 @@ function(target_webos_package TARGET)
 
     get_filename_component(appinfo_icon_basename ${appinfo_icon} NAME)
 
-    set(package_dir ${CMAKE_CURRENT_BINARY_DIR}/pkg_$ENV{ARCH})
+    set(package_dir pkg_$ENV{ARCH})
     set(package_ipk_name ${appinfo_id}_${appinfo_version}_$ENV{ARCH}.ipk)
+    set(package_zip_name ${appinfo_id}_${appinfo_version}_pkg_$ENV{ARCH}.zip)
     target_compile_definitions(${TARGET} PUBLIC WEBOS_APPID="${appinfo_id}")
 
     # Build package target for component
     add_custom_target(webos-package-${TARGET}
         # FIXME: jo on Debian 10 doesn't support -N option. Find something else?
-        COMMAND rm -rf pkg_$ENV{ARCH} 
+        COMMAND rm -rf pkg_$ENV{ARCH} ${package_zip_name} ${package_ipk_name}
         COMMAND mkdir pkg_$ENV{ARCH}
         # Copy binary
         COMMAND cp ${bin_path} ${package_dir}/
@@ -64,11 +65,13 @@ function(target_webos_package TARGET)
         # Copy icon
         COMMAND cp ${appinfo_icon} ${package_dir}/
         # Copy extra files
-        COMMAND test -n "${package_assets}" && cd ${CMAKE_CURRENT_SOURCE_DIR} && cp -r ${package_assets} ${package_dir}/ || true
+        COMMAND test -n "${package_assets}" && cd ${CMAKE_CURRENT_SOURCE_DIR} && cp -r ${package_assets} ${CMAKE_CURRENT_BINARY_DIR}/${package_dir}/ || true
+        # Build zip for repackaging
+        COMMAND zip -r ${package_zip_name} ${package_dir}
         # Build IPK
         COMMAND ares-package ${package_dir}
         DEPENDS ${TARGET}
-        BYPRODUCTS ${package_dir} ${CMAKE_CURRENT_BINARY_DIR}/${package_ipk_name}
+        BYPRODUCTS ${package_dir} ${CMAKE_CURRENT_BINARY_DIR}/${package_zip_name} ${CMAKE_CURRENT_BINARY_DIR}/${package_ipk_name}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         VERBATIM
         SOURCES ${appinfo_icon}

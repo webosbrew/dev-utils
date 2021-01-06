@@ -24,6 +24,7 @@ static void dh_redir_output(const char *outfile, const char *errfile)
     int fderr = open(errfile, O_RDWR | O_CREAT | O_APPEND, 0666);
     // make stdout go to file
     dup2(fdout, 1);
+    setvbuf(stdout, NULL, _IONBF, 0);
     // make stderr go to file
     dup2(fderr, 2);
 

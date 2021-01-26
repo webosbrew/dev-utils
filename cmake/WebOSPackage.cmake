@@ -75,8 +75,13 @@ function(target_webos_package TARGET)
         SOURCES ${appinfo_icon}
     )
     
+    set(ares_arguments "")
+    if (WEBOS_INSTALL_DEVICE)
+        set(ares_arguments "-d" ${WEBOS_INSTALL_DEVICE})
+    endif()
+
     add_custom_target(webos-install-${TARGET}
-        COMMAND ares-install ${CMAKE_CURRENT_BINARY_DIR}/${package_ipk_name}
+        COMMAND ares-install ${ares_arguments} ${CMAKE_CURRENT_BINARY_DIR}/${package_ipk_name}
         DEPENDS webos-package-${TARGET}
     )
 endfunction()

@@ -84,4 +84,9 @@ function(target_webos_package TARGET)
         COMMAND ares-install ${ares_arguments} ${CMAKE_CURRENT_BINARY_DIR}/${package_ipk_name}
         DEPENDS webos-package-${TARGET}
     )
+
+    add_custom_target(webos-launch-${TARGET}
+        COMMAND ares-launch ${appinfo_id} ${ares_arguments} 
+        DEPENDS webos-install-${TARGET}
+    )
 endfunction()

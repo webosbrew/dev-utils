@@ -48,11 +48,19 @@ function(target_webos_package TARGET)
 
     set(package_dir pkg_$ENV{ARCH})
     set(package_ipk_name ${appinfo_id}_${appinfo_version}_$ENV{ARCH}.ipk)
-    set(${TARGET}_WEBOS_PACKAGE_FILENAME ${package_ipk_name} PARENT_SCOPE)
+
     target_compile_definitions(${TARGET} PUBLIC WEBOS_APPID="${appinfo_id}")
 
     # Build package target for component
-    add_custom_target(webos-package-${TARGET}
+    set(package_target_name ${TARGET}.ipk)
+
+    set_target_properties(${TARGET} PROPERTIES 
+        WEBOS_PACKAGE_FILENAME ${package_ipk_name}
+        WEBOS_PACKAGE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${package_ipk_name}
+        WEBOS_PACKAGE_TARGET ${package_target_name}
+    )
+
+    add_custom_target(${package_target_name}
         # FIXME: jo on Debian 10 doesn't support -N option. Find something else?
         COMMAND rm -rf pkg_$ENV{ARCH} ${package_ipk_name}
         COMMAND mkdir pkg_$ENV{ARCH}
@@ -74,39 +82,4 @@ function(target_webos_package TARGET)
         VERBATIM
         SOURCES ${appinfo_icon}
     )
-    
-    set(ares_arguments "")
-
-    if (WEBOS_INSTALL_DEVICES_LIST)
-        execute_process(COMMAND bash -c "ares-setup-device -F | json -a name" OUTPUT_VARIABLE ares_devices_output)
-        string(REPLACE "\n" ";" ares_devices_list ${ares_devices_output})
-        # separate_arguments(ares_devices_list)
-        foreach(ares_device_name ${ares_devices_list})
-            set(ares_arguments "-d" ${ares_device_name})
-            
-            add_custom_target(webos-install-${TARGET}-${ares_device_name}
-                COMMAND ares-install ${ares_arguments} ${CMAKE_CURRENT_BINARY_DIR}/${package_ipk_name}
-                DEPENDS webos-package-${TARGET}
-            )
-
-            add_custom_target(webos-launch-${TARGET}-${ares_device_name}
-                COMMAND ares-launch ${appinfo_id} ${ares_arguments} 
-                DEPENDS webos-install-${TARGET}-${ares_device_name}
-            )
-        endforeach()
-    else()
-        if (WEBOS_INSTALL_DEVICE)
-            set(ares_arguments "-d" ${WEBOS_INSTALL_DEVICE})
-        endif()
-
-        add_custom_target(webos-install-${TARGET}
-            COMMAND ares-install ${ares_arguments} ${CMAKE_CURRENT_BINARY_DIR}/${package_ipk_name}
-            DEPENDS webos-package-${TARGET}
-        )
-
-        add_custom_target(webos-launch-${TARGET}
-            COMMAND ares-launch ${appinfo_id} ${ares_arguments} 
-            DEPENDS webos-install-${TARGET}
-        )
-    endif()
 endfunction()

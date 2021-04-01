@@ -29,14 +29,14 @@ function(target_webos_install TARGET)
             set(ares_arguments "-d" ${WEBOS_INSTALL_DEVICE})
         endif()
 
-        add_custom_target(webos-install.${TARGET}
+        add_custom_target(webos-install-${TARGET}
             COMMAND ares-install ${ares_arguments} ${package_path}
             DEPENDS ${package_target}
         )
 
-        add_custom_target(webos-launch.${TARGET}
+        add_custom_target(webos-launch-${TARGET}
             COMMAND ares-launch ${appinfo_id} ${ares_arguments} 
-            DEPENDS webos-install.${TARGET}
+            DEPENDS webos-install-${TARGET}
         )
     endif()
 endfunction()

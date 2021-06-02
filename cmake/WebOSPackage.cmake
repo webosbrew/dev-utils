@@ -46,7 +46,7 @@ function(target_webos_package TARGET)
 
     get_filename_component(appinfo_icon_basename ${appinfo_icon} NAME)
 
-    set(package_dir pkg_$ENV{ARCH})
+    set(package_dir ${CMAKE_CURRENT_BINARY_DIR}/pkg_$ENV{ARCH})
     set(package_ipk_name ${appinfo_id}_${appinfo_version}_$ENV{ARCH}.ipk)
 
     target_compile_definitions(${TARGET} PUBLIC WEBOS_APPID="${appinfo_id}")

@@ -2,8 +2,9 @@
 
 EXE="$1"
 
-if [ ! -x "${EXE}" ]; then
+if [ ! -f "${EXE}" ]; then
   echo "Usage: $0 executable"
+  exit 1
 fi
 
 if [ ! -d "${WEBOS_ROOTFS}" ]; then
@@ -11,11 +12,10 @@ if [ ! -d "${WEBOS_ROOTFS}" ]; then
   exit 1
 fi
 
-
 lib_search_paths="$(objdump -p ${EXE} | grep RUNPATH | tr -s ' ' | cut -d ' ' -f 3)"
 lib_search_paths="${lib_search_paths}:${WEBOS_ROOTFS}/lib:${WEBOS_ROOTFS}/usr/lib:${WEBOS_LD_LIBRARY_PATH}"
 
-required_syms=$(nm --dynamic --extern-only --undefined-only "${EXE}"| grep ' [U] ' | tr -s ' ' | cut -d ' ' -f 3)
+required_syms=$(nm --dynamic --extern-only --undefined-only "${EXE}" | grep ' [U] ' | tr -s ' ' | cut -d ' ' -f 3)
 
 needed_libs=$(objdump -p "${EXE}" | grep NEEDED | tr -s ' ' | cut -d ' ' -f 3)
 found_libs=""
@@ -43,9 +43,14 @@ done
 lib_syms=$(nm --dynamic --extern-only --defined-only ${found_libs} | grep ' [a-zA-Z] ' | cut -d ' ' -f 3 | tr -s '@')
 
 for sym in ${required_syms}; do
-  if ! echo "${lib_syms}" | grep "${sym}" > /dev/null; then
+  if ! echo "${lib_syms}" | grep "${sym}" >/dev/null; then
     has_missing=1
-    echo "Missing symbol: ${sym}"
+    sym_name=$(echo "${sym}" | cut -d '@' -f 1 | c++filt)
+    sym_ver=$(echo "${sym}" | cut -d '@' -f 2)
+    if [ -n "${sym_ver}" ]; then
+      sym_ver="@${sym_ver}"
+    fi
+    echo "Missing symbol: ${sym_name}${sym_ver}"
   fi
 done
 

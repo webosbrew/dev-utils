@@ -43,12 +43,11 @@ done
 lib_syms=$(nm --dynamic --extern-only --defined-only ${found_libs} | grep ' [a-zA-Z] ' | cut -d ' ' -f 3 | tr -s '@')
 
 for sym in ${required_syms}; do
-  if ! echo "${lib_syms}" | grep "${sym}" >/dev/null; then
+  if ! echo "${lib_syms}" | grep -q "${sym}"; then
     has_missing=1
     sym_name=$(echo "${sym}" | cut -d '@' -f 1 | c++filt)
-    sym_ver=$(echo "${sym}" | cut -d '@' -f 2)
-    if [ -n "${sym_ver}" ]; then
-      sym_ver="@${sym_ver}"
+    if echo "${sym}" | grep -q '@'; then
+      sym_ver="@$(echo ${sym} | cut -d '@' -f 2)"
     fi
     echo "Missing symbol: ${sym_name}${sym_ver}"
   fi

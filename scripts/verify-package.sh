@@ -35,7 +35,7 @@ for appinfo in $(find "${temp_dir}" -name 'appinfo.json'); do
   WEBOS_LD_LIBRARY_PATH="${lib_dir}" verify_symbols "${main_exe}"
   echo
   echo
-  for lib in $(find "${lib_dir}" ! -type l); do
+  for lib in $(find "${lib_dir}" -type f); do
     echo "Result for $(basename $lib):"
     echo "------"
     WEBOS_LD_LIBRARY_PATH="${lib_dir}" verify_symbols "${lib}"

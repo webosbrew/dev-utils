@@ -2,6 +2,8 @@
 'use strict';
 /**
  * Generate manifest.json for webOS Homebrew Channel publishing
+ *
+ * Deprecated. Use https://www.npmjs.com/package/@webosbrew/pub-utils instead
  */
 
 const fs = require('fs');

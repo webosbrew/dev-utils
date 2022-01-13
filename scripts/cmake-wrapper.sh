@@ -1,7 +1,8 @@
 #!/bin/sh
-# (Deprecated) OE Toolchain based cmake wrapper
+# Buildroot Toolchain based cmake wrapper
 
-. /opt/webos-sdk-x86_64/1.0.g/environment-setup-armv7a-neon-webos-linux-gnueabi
+FILEPATH="$(readlink -f "$0")"
+SDKPATH="$(dirname "${FILEPATH}")"
 
 CMAKE_BIN=$(which cmake)
 
@@ -22,7 +23,7 @@ while getopts ":t:-:" arg; do
 done
 
 if [ ${IS_CONFIGURE} = 1 ]; then
-  toolchain_opt="-DCMAKE_TOOLCHAIN_FILE=$OECORE_NATIVE_SYSROOT/usr/share/cmake/OEToolchainConfig.cmake"
+  toolchain_opt="-DCMAKE_TOOLCHAIN_FILE=${SDKPATH}/share/buildroot/toolchainfile.cmake"
   exec "$CMAKE_BIN" "${toolchain_opt}" "$@"
 else
   exec "$CMAKE_BIN" "$@"

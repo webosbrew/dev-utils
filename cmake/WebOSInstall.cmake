@@ -27,6 +27,8 @@ function(target_webos_install TARGET)
     else()
         if (WEBOS_INSTALL_DEVICE)
             set(ares_arguments "-d" ${WEBOS_INSTALL_DEVICE})
+        elseif (WEBOS_INSTALL_PICK_DEVICE)
+            set(ares_arguments "--pick-device")
         endif()
 
         add_custom_target(webos-install-${TARGET}
